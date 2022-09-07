@@ -1,12 +1,13 @@
-import { Alert, Button, Grid, TextField } from '@mui/material';
+import { Alert, Button, CircularProgress, Grid, TextField } from '@mui/material';
 import React, { useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from '../../hooks/useForm';
+import { apiConnection } from '../../api/apiConnection';
+import { login } from '../../store/auth/authSlice';
 
 const formData = {
     email: '',
-    password: '',
-    displayName: ''
+    password: ''
 };
 
 const formValidators = {
@@ -15,10 +16,7 @@ const formValidators = {
     }, 'El correo no cumple con el formato establecido'],
     password: [(value) => {
         return value.length >= 6;
-    }, 'La contraseña debe tener al menos seis caracteres'],
-    displayName: [(value) => {
-        return value.length >= 2;
-    }, 'El nombre debe tener al menos dos caracteres'],
+    }, 'La contraseña debe tener al menos seis caracteres']
 };
 
 const LoginPage = () => {
@@ -26,17 +24,32 @@ const LoginPage = () => {
     const [formSubmited, setFormSubmited] = useState(false);
     const { status, message } = useSelector(state => state.auth);
     const isCheckingAuthentication = useMemo(() => status === 'checking', [status]);
+    const [responseStatus, setResponseStatus] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
 
     const { 
-        formState, displayName, email, password, onInputChange,
-        isFormValid, displayNameValid, emailValid, passwordValid, 
+        formState, email, password, onInputChange,
+        isFormValid, emailValid, passwordValid, 
     } = useForm(formData, formValidators);
 
     const onSubmit = ( event ) => {
         event.preventDefault();
+        setIsLoading(true);
         setFormSubmited(true);
         if ( !isFormValid ) return;
-        console.log(formState);
+
+        const {email, password} = formState;
+
+        apiConnection.post('/auth/', {email, password})
+            .then(response => {
+                setResponseStatus(response);
+                dispatch(login(response));
+                setIsLoading(false);
+            })
+            .catch(error => {
+                setResponseStatus(error.response);
+                setIsLoading(false);
+            });
     };
 
     return (
@@ -75,6 +88,16 @@ const LoginPage = () => {
                     >
                         <Alert severity='error'>{ message }</Alert>
                     </Grid>
+                    {isLoading && (
+                        <Grid container justifyContent='center'>
+                            <CircularProgress />
+                        </Grid>
+                    )}
+                    {responseStatus.status === 404
+                        &&  <Alert severity="error" sx={{ width: '100%', ml: 2 }}>
+                                Error al iniciar sesión
+                            </Alert>
+                    }
                     <Grid item xs={ 12 }>
                         <Button
                             disabled={ !!isCheckingAuthentication }
@@ -82,7 +105,7 @@ const LoginPage = () => {
                             variant='contained' 
                             fullWidth
                         >
-                            Crear cuenta
+                            Iniciar sesión
                         </Button>
                     </Grid>
                 </Grid>

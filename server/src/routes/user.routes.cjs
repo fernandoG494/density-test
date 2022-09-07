@@ -1,7 +1,6 @@
 const express = require('express');
 const users = require('../usecases/user.usecase.cjs');
 const router = express.Router();
-const auth = require('../middleware/auth.middleware.cjs');
 
 // create user
 router.post('/', async(request, response) => {
@@ -11,7 +10,7 @@ router.post('/', async(request, response) => {
     try{
         const userExist = await users.getUserExist(userData.email);
 
-        if(!userExist){
+        if(!userExist.ok){
             const newUser = await users.createUser(userData);
             response.status(201).json({
                 status: 201,
@@ -23,7 +22,7 @@ router.post('/', async(request, response) => {
                 status: 400,
                 message: 'User already exist'
             });
-        }
+        };
     }catch(error){
         response.status(error.status || 500);
         response.json({

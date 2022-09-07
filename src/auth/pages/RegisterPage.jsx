@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react';
-import { Alert, Button, Grid, TextField } from '@mui/material';
+import { Alert, Button, CircularProgress, Grid, TextField } from '@mui/material';
 import { useForm } from '../../hooks/useForm';
 import { useDispatch, useSelector } from 'react-redux';
+import { apiConnection } from '../../api/apiConnection';
 
 const formData = {
     email: '',
@@ -22,21 +23,32 @@ const formValidators = {
 };
 
 const RegisterPage = () => {
-    const dispatch = useDispatch();
     const [formSubmited, setFormSubmited] = useState(false);
     const { status, message } = useSelector(state => state.auth);
     const isCheckingAuthentication = useMemo(() => status === 'checking', [status]);
+    const [responseStatus, setResponseStatus] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
 
     const { 
         formState, displayName, email, password, onInputChange,
         isFormValid, displayNameValid, emailValid, passwordValid, 
     } = useForm(formData, formValidators);
 
-    const onSubmit = ( event ) => {
+    const onSubmit = async(event) => {
+        setIsLoading(true);
         event.preventDefault();
         setFormSubmited(true);
         if ( !isFormValid ) return;
-        console.log(formState);
+
+        const {displayName, email, password} = formState;
+        apiConnection.post('/users/', {displayName, email, password})
+            .then(response => {
+                setResponseStatus(response);
+                setIsLoading(false);
+            }).catch(error => {
+                setResponseStatus(error.response);
+                setIsLoading(false);
+            });
     };
 
     return (
@@ -90,6 +102,21 @@ const RegisterPage = () => {
                     >
                         <Alert severity='error'>{ message }</Alert>
                     </Grid>
+                    {isLoading && (
+                        <Grid container justifyContent='center'>
+                            <CircularProgress />
+                        </Grid>
+                    )}
+                    {responseStatus.status === 400
+                        &&  <Alert severity="error" sx={{ width: '100%', ml: 2 }}>
+                                El usuario ya existe
+                            </Alert>
+                    }
+                    {responseStatus.status === 201
+                        &&  <Alert severity="success" sx={{ width: '100%', ml: 2 }}>
+                                El usuario se creo correctamente
+                            </Alert>
+                    }
                     <Grid item xs={ 12 }>
                         <Button
                             disabled={ !!isCheckingAuthentication }

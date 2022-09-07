@@ -7,10 +7,10 @@ const {
     DB_USER,
     DB_PASSWORD,
     DB_CLUSTER,
-    density
+    DB_NAME
 } = process.env;
 
-mongoose.connect(`mongodb+srv://${DB_USER}:${DB_PASSWORD}@${DB_CLUSTER}/${density}`)
+mongoose.connect(`mongodb+srv://${DB_USER}:${DB_PASSWORD}@${DB_CLUSTER}/${DB_NAME}`)
     .then(
         server.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);

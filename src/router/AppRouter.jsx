@@ -11,7 +11,6 @@ const AppRouter = () => {
         return <div>Checker</div>
     }
 
-    console.log(status);
     return (
         <Routes>
             {(status) === 'authenticated'
