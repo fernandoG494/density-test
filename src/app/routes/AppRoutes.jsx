@@ -1,5 +1,6 @@
 import React from 'react';
-import { Navigate, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import AppPage from '../pages/AppPage';
 
 const AppRoutes = () => {
     return (

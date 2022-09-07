@@ -3,16 +3,19 @@ import { createSlice } from '@reduxjs/toolkit';
 export const authSlice = createSlice({
     name: 'auth',
     initialState: {
-        status: 'non-authenticated',
+        status: 'authenticated', // non-authenticated, authenticated, checking
         authPage: null,
         uid: null,
         email: null,
         displayName: null,
-        errorMessage: ''
+        isAdmin: false,
+        errorMessage: '',
     },
     reducers: {
         login: () => {},
-        logout: () => {},
+        logout: (state, {payload}) => {
+            state.status = payload.status
+        },
         checkingCredentials: () => {},
         setAuthPage: (state, {payload}) => {
             state.authPage = payload.page;
