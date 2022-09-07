@@ -6,7 +6,6 @@ import AuthRoutes from '../auth/routes/AuthRoutes';
 
 const AppRouter = () => {
     const { status } = useSelector(state => state.auth);
-    console.log(status);
 
     if(status === 'checking'){
         return <div>Checker</div>

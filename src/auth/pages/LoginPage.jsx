@@ -24,8 +24,7 @@ const formValidators = {
 const LoginPage = () => {
     const dispatch = useDispatch();
     const [formSubmited, setFormSubmited] = useState(false);
-    const { status, errorMessage } = useSelector(state => state.auth);
-
+    const { status, message } = useSelector(state => state.auth);
     const isCheckingAuthentication = useMemo(() => status === 'checking', [status]);
 
     const { 
@@ -35,28 +34,28 @@ const LoginPage = () => {
 
     const onSubmit = ( event ) => {
         event.preventDefault();
+        setFormSubmited(true);
+        if ( !isFormValid ) return;
         console.log(formState);
     };
 
     return (
-        <form onSubmit={onSubmit}>
+        <form onSubmit={onSubmit} >
             <Grid container>
                 <Grid item xs={ 12 } sx={{ mt: 2 }}>
-                    <TextField
-                        autoComplete='off'
-                        label="Email" 
-                        type="email" 
-                        placeholder='Email' 
+                    <TextField 
+                        label="Correo" 
+                        type="email"
+                        placeholder='correo@google.com' 
                         fullWidth
                         name="email"
                         value={ email }
                         onChange={ onInputChange }
-                        error={ !!passwordValid && formSubmited }
+                        error={ !!emailValid && formSubmited }
                     />
                 </Grid>
                 <Grid item xs={ 12 } sx={{ mt: 2 }}>
-                    <TextField
-                        autoComplete='off'
+                    <TextField 
                         label="Contraseña" 
                         type="password" 
                         placeholder='Contraseña' 
@@ -64,16 +63,17 @@ const LoginPage = () => {
                         name="password"
                         value={ password }
                         onChange={ onInputChange }
-                        error={ !!passwordValid && formSubmited }
+                        error={ !!passwordValid && formSubmited  }
                     />
                 </Grid>
+
                 <Grid container spacing={ 2 } sx={{ mb: 2, mt: 1 }}>
                     <Grid
                         item 
                         xs={ 12 }
-                        display={ !!errorMessage ? '': 'none' }
+                        display={ !!message ? '': 'none' }
                     >
-                        <Alert severity='error'>{ errorMessage }</Alert>
+                        <Alert severity='error'>{ message }</Alert>
                     </Grid>
                     <Grid item xs={ 12 }>
                         <Button
