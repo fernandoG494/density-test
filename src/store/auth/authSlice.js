@@ -9,6 +9,7 @@ export const authSlice = createSlice({
         email: null,
         displayName: null,
         isAdmin: false,
+        adminPage: '',
         errorMessage: '',
     },
     reducers: {
@@ -20,6 +21,7 @@ export const authSlice = createSlice({
             state.email = email;
             state.displayName = displayName;
             state.isAdmin = isAdmin;
+            state.adminPage = 'users';
             state.errorMessage = '';
         },
         logout: (state, {payload}) => {
@@ -36,6 +38,10 @@ export const authSlice = createSlice({
         },
         setAuthPage: (state, {payload}) => {
             state.authPage = payload.page;
+        },
+        setAdminPage: (state, {payload}) => {
+            console.log('>>>>', payload);
+            state.adminPage = payload;
         }
     }
 });
@@ -44,5 +50,6 @@ export const {
     login,
     logout,
     checkingCredentials,
-    setAuthPage
+    setAuthPage,
+    setAdminPage
 } = authSlice.actions;

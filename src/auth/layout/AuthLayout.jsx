@@ -60,7 +60,8 @@ const AuthLayout = () => {
                     </Grid>
                     <Grid item>
                         <Button
-                            disabled={authPage==='register'}
+                            // disabled={authPage==='register'}
+                            disabled={true}
                             variant='outlined'
                             xs={{ rm: 12, md: 6 }}
                             onClick={handleRegister}
